@@ -733,11 +733,11 @@ The full UAV transmission line inspection dataset used in the manuscript is not 
 
 ## 17. Contact
 
-For questions about reproduction, dataset format, or model implementation, please contact:
+For questions about reproduction, dataset format, model implementation, or code usage, please contact the repository maintainer or the corresponding author of the related manuscript.
 
 ```text
-Corresponding author: Author Name
-Email: your_email@example.com
-```
+Repository maintainer: Shuang Li
+Email: lishuang@mail.ncut.edu.cn
 
-Please replace the contact information before public release.
+Corresponding author: Jining Xu
+Email: jxu0422@ncut.edu.cn
