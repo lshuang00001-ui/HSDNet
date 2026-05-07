@@ -678,4 +678,6 @@ GitHub repository:
 ```text
 https://github.com/lshuang00001-ui/HSDNet
 Archived version with DOI:
+
+```text
 https://doi.org/10.5281/zenodo.20065076
