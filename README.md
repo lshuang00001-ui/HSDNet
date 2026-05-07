@@ -1,8 +1,8 @@
-﻿# HSDNet: Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment
+# HSDNet: Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment
 
- [![DOI](https://zenodo.org/badge/1231611053.svg)](https://doi.org/10.5281/zenodo.20065075)
+[![DOI](https://zenodo.org/badge/1231611053.svg)](https://doi.org/10.5281/zenodo.20065075)
 
-This repository provides the modified HSDNet modules, model configuration files, and reproducibility instructions for the manuscript:
+This repository provides the modified HSDNet modules, model configuration files, scripts, experimental result summaries, and reproducibility instructions for the manuscript:
 
 **Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment**
 
@@ -48,7 +48,7 @@ The main components of HSDNet include:
 ## 3. Repository Structure
 
 ```text
-HSDNet_release
+HSDNet
 │
 ├── README.md
 ├── requirements.txt
@@ -61,16 +61,15 @@ HSDNet_release
 │   └── data_example.yaml
 │
 ├── models
+│   ├── __init__.py
 │   ├── block.py
-│   ├── tcf.py
 │   ├── head.py
-│   └── __init__.py
+│   └── tcf.py
 │
 ├── scripts
 │   ├── train.py
 │   ├── val.py
-│   ├── predict.py
-│
+│   └── predict.py
 │
 ├── docs
 │   ├── dataset_description.md
@@ -100,6 +99,7 @@ HSDNet_release
 | `docs/dataset_description.md` | Dataset description, category definitions, and annotation format. |
 | `docs/reproduction.md` | Step-by-step reproduction instructions. |
 | `docs/module_registration.md` | Instructions for registering custom HSDNet modules in the Ultralytics YOLO framework. |
+| `docs/model_structure.md` | Description of the HSDNet model structure. |
 | `results/main_results.md` | Main experimental results. |
 | `results/ablation_results.md` | Ablation study results. |
 
@@ -130,43 +130,58 @@ conda activate hsdnet
 pip install -r requirements.txt
 ```
 
+Users can also create the environment using:
+
+```bash
+conda env create -f environment.yml
+conda activate hsdnet
+```
+
 ---
 
 ## 6. Important Note on Ultralytics Integration
 
 This repository provides the modified HSDNet modules, model configuration files, scripts, and reproducibility instructions.
 
-HSDNet is implemented based on the Ultralytics YOLO framework. This repository does not include the full Ultralytics source code. Instead, the files in `models/` are provided as HSDNet-specific patch files and reference implementations.
+HSDNet is implemented based on the Ultralytics YOLO framework. This repository does **not** include the full Ultralytics source code. Instead, the files in `models/` are provided as HSDNet-specific patch files and reference implementations.
 
-Specifically, the custom modules required by HSDNet are provided in:
+The custom modules required by HSDNet are provided in:
 
 ```text
 models/block.py
 models/head.py
 models/tcf.py
+```
 
 The model configuration file is provided in:
 
+```text
 configs/hsdnet.yaml
+```
 
 Before training, users should first install the Ultralytics YOLO framework and then register or merge the provided custom modules into their local Ultralytics environment.
 
 The required custom module names are:
 
+```text
 SE_SPDConv
 SplitOmniFusion
 Detect_SEPS
+```
 
 The Target-Constrained Filter is implemented separately as a post-processing module:
 
+```text
 models/tcf.py
+```
 
 Detailed module registration instructions are provided in:
 
+```text
 docs/module_registration.md
-
-Note that SE-SPDConv is the paper-level name, while SE_SPDConv is used as the code-level class name because hyphens are not valid in Python class names.
 ```
+
+Note that **SE-SPDConv** is the paper-level name, while **SE_SPDConv** is used as the code-level class name because hyphens are not valid in Python class names.
 
 ---
 
@@ -192,7 +207,7 @@ Each label file should follow the YOLO annotation format:
 class_id x_center y_center width height
 ```
 
-where all coordinates are normalized to the range `[0, 1]`.
+All coordinates are normalized to the range `[0, 1]`.
 
 An example dataset configuration is provided in:
 
@@ -249,7 +264,7 @@ configs/data_example.yaml
 
 to match the local dataset path.
 
-Then run:
+Run:
 
 ```bash
 python scripts/train.py
@@ -262,7 +277,8 @@ image size: 640 × 640
 epochs: 300
 batch size: 24
 optimizer: AdamW
-initial learning rate: 0.01
+patience: 30
+workers: 8
 device: CUDA GPU
 ```
 
@@ -285,7 +301,7 @@ python scripts/val.py
 Or use the Ultralytics command-line interface:
 
 ```bash
-yolo detect val model=runs/train/hsdnet/weights/best.pt data=configs/data_example.yaml imgsz=640 device=0
+yolo detect val model=runs/train/hsdnet/weights/best.pt data=configs/data_example.yaml imgsz=640 batch=24 device=0
 ```
 
 The main evaluation metrics include:
@@ -316,24 +332,36 @@ yolo detect predict model=runs/train/hsdnet/weights/best.pt source=examples/imag
 
 ---
 
-## 12. Inference Speed Evaluation
+## 12. Target-Constrained Filter
 
-To evaluate inference speed:
+The Target-Constrained Filter implementation is provided in:
 
-```bash
-python scripts/get_fps.py
+```text
+models/tcf.py
 ```
 
-When reporting FPS, please specify:
+TCF is designed as a post-processing module. It does not change the main network architecture, feature extraction process, or detection head. Instead, it filters defect predictions according to the spatial dependency between host components and defect targets.
 
-- hardware platform;
-- GPU or edge device type;
-- input image size;
-- batch size;
-- inference framework;
-- precision mode, such as FP32, FP16, or TensorRT;
-- number of warm-up iterations;
-- number of test iterations.
+In the manuscript, TCF is used to suppress semantically invalid isolated defect predictions. For example, defect targets such as `broken`, `flashover`, and `corrode` should be spatially associated with valid host components.
+
+A typical evaluation protocol for TCF includes two settings:
+
+```text
+without TCF
+with TCF
+```
+
+Recommended indicators include:
+
+```text
+defect false positives
+Precision
+Recall
+mAP@0.5
+mAP@0.5:0.95
+class-wise AP
+qualitative detection examples
+```
 
 ---
 
@@ -343,7 +371,7 @@ To reproduce the main results:
 
 1. Install the required environment.
 2. Install the Ultralytics YOLO framework.
-3. Register the custom HSDNet modules according to `docs/module_registration.md`.
+3. Register or merge the custom HSDNet modules according to `docs/module_registration.md`.
 4. Prepare the dataset in YOLO format.
 5. Modify `configs/data_example.yaml`.
 6. Train HSDNet using `configs/hsdnet.yaml`.
@@ -374,20 +402,30 @@ results/ablation_results.md
 
 In the manuscript, HSDNet achieves strong detection performance while maintaining efficient inference speed for edge deployment.
 
----
-
-## 15. Code Availability
-
-The source code, configuration files, training scripts, inference scripts, and reproducibility instructions are available in this repository.
-
-A permanent archived version will be provided through Zenodo after the official GitHub release.
+The reported main results include:
 
 ```text
-GitHub repository: https://github.com/your_username/HSDNet
-Zenodo DOI: https://doi.org/10.5281/zenodo.xxxxxxxx
+mAP@0.5: 88.3%
+Windows platform single-model FPS: 198
+Linux edge-device stable FPS: approximately 28
 ```
 
-Please replace the above links after creating the GitHub repository and Zenodo archive.
+---
+
+## 15. Citation
+
+If this repository is useful for your research, please cite the related manuscript and archived software release.
+
+```bibtex
+@article{HSDNet2026,
+  title   = {Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment},
+  author  = {Li, Min and Li, Shuang and Li, Kailong and Tong, Fengyu and Jiang, Zhenzhong and Zhao, Jinlu and Xu, Jining},
+  journal = {The Visual Computer},
+  year    = {2026}
+}
+```
+
+Min Li and Shuang Li contributed equally to this work. Jining Xu is the corresponding author.
 
 ---
 
@@ -425,11 +463,13 @@ The full UAV transmission line inspection dataset used in the manuscript is not 
 
 ## 17. License
 
-This project is released for academic research purposes.
+This project follows the license statement provided in:
 
-Since this implementation is based on the Ultralytics YOLO framework, please follow the license requirements of the corresponding Ultralytics version used in this repository.
+```text
+LICENSE
+```
 
-If the implementation directly modifies or redistributes Ultralytics source code, please ensure that the license file is consistent with the original framework license.
+Since this implementation is based on the Ultralytics YOLO framework, users should follow the license requirements of the corresponding Ultralytics YOLO version used in their environment.
 
 ---
 
@@ -443,11 +483,9 @@ The authors thank the open-source community for providing useful tools and libra
 
 ## 19. Contact
 
-For questions about the code, dataset format, or reproduction process, please contact:
+For questions about the code, dataset format, or reproduction process, please contact the corresponding author.
 
 ```text
 Corresponding author: Jining Xu
 Email: jxu0422@ncut.edu.cn
 ```
-
-Please replace the contact information before releasing the repository.
