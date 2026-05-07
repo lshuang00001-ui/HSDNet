@@ -40,6 +40,7 @@ Typical correspondence:
 
 
 The files models/block.py and models/head.py may depend on other Ultralytics internal modules in the local environment. Therefore, users should merge the required custom classes into their own Ultralytics installation rather than importing these patch files as fully standalone modules.
+```
 ---
 
 ## 3. Model Configuration
