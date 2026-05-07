@@ -677,6 +677,7 @@ GitHub repository:
 
 ```text
 https://github.com/lshuang00001-ui/HSDNet
+```
 Archived version with DOI:
 
 ```text
