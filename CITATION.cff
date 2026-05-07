@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the related manuscript."
+title: "HSDNet: Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment"
+type: software
+
+authors:
+  - family-names: "Li"
+    given-names: "Min"
+    email: "liminncut@ncut.edu.cn"
+
+  - family-names: "Li"
+    given-names: "Shuang"
+    email: "lishuang@mail.ncut.edu.cn"
+
+  - family-names: "Li"
+    given-names: "Kailong"
+    email: "leeph.d2023@mail.ncut.edu.cn"
+
+  - family-names: "Tong"
+    given-names: "Fengyu"
+    email: "18238946747@163.com"
+
+  - family-names: "Jiang"
+    given-names: "Zhenzhong"
+    email: "545582991@qq.com"
+
+  - family-names: "Zhao"
+    given-names: "Jinlu"
+    email: "zjlssss@163.com"
+
+  - family-names: "Xu"
+    given-names: "Jining"
+    email: "jxu0422@ncut.edu.cn"
+
+repository-code: "https://github.com/your_username/HSDNet"
+url: "https://github.com/your_username/HSDNet"
+
+abstract: "HSDNet is a hierarchically constrained lightweight detection network for UAV-based transmission line defect detection and edge deployment."
+
+keywords:
+  - UAV inspection
+  - transmission line defect detection
+  - lightweight object detection
+  - edge deployment
+  - visual computing
+
+license: "AGPL-3.0-or-later"
+version: "1.0.0"
+date-released: "2026-05-07"

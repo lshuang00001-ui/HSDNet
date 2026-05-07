@@ -1,0 +1,14 @@
+﻿path: dataset
+train: images/train
+val: images/val
+test: images/test
+
+
+nc: 6
+names:
+  - insulator
+  - broken
+  - flashover
+  - hammer
+  - corrode
+  - nest

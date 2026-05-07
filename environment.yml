@@ -1,0 +1,23 @@
+name: hsdnet
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip
+  - pytorch
+  - torchvision
+  - pytorch-cuda=11.8
+  - pip:
+      - ultralytics
+      - opencv-python
+      - numpy
+      - pandas
+      - matplotlib
+      - tqdm
+      - pyyaml
+      - scikit-learn
+      - thop

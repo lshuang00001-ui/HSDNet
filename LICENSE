@@ -1,0 +1,13 @@
+AGPL-3.0-or-later Notice
+
+This repository provides the modified HSDNet modules, model configuration files, scripts, and documentation for academic reproducibility.
+
+HSDNet is implemented based on the Ultralytics YOLO framework. Code that is derived from, integrated with, or redistributed together with Ultralytics YOLO should follow the license terms of the corresponding Ultralytics YOLO version.
+
+Unless otherwise stated, the code and documentation in this repository are released under the GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later), for consistency with the open-source license requirements of the Ultralytics YOLO framework.
+
+The full UAV transmission line inspection dataset used in the manuscript is not included in this repository due to data ownership, privacy, and operational safety restrictions. The dataset description, annotation format, and configuration examples are provided for reproducibility.
+
+This repository is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement. In no event shall the authors be liable for any claim, damages, or other liability arising from the use of this repository.
+
+Users are responsible for ensuring that their use, modification, and redistribution of this repository and any related Ultralytics YOLO code comply with the applicable licenses.
