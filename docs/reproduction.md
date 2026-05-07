@@ -1,8 +1,8 @@
-﻿# Reproduction Instructions
+# Reproduction Instructions
 
-This document provides step-by-step instructions for reproducing the training, validation, inference, model export, and speed evaluation procedures of HSDNet.
+This document provides step-by-step instructions for reproducing the training, validation, inference, Target-Constrained Filter evaluation, and main experimental settings of HSDNet.
 
-The repository is designed for UAV-based transmission line defect detection using the Ultralytics YOLO framework.
+HSDNet is designed for UAV-based transmission line defect detection and edge deployment. The implementation is based on the Ultralytics YOLO framework.
 
 ---
 
@@ -44,6 +44,13 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
+Alternatively, users can create the environment using:
+
+```bash
+conda env create -f environment.yml
+conda activate hsdnet
+```
+
 ---
 
 ## 2. Repository Structure
@@ -51,7 +58,7 @@ pip install -r requirements.txt
 The expected repository structure is:
 
 ```text
-HSDNet_release
+HSDNet
 │
 ├── README.md
 ├── requirements.txt
@@ -64,9 +71,10 @@ HSDNet_release
 │   └── data_example.yaml
 │
 ├── models
+│   ├── __init__.py
 │   ├── block.py
 │   ├── head.py
-│   └── __init__.py
+│   └── tcf.py
 │
 ├── scripts
 │   ├── train.py
@@ -76,6 +84,7 @@ HSDNet_release
 ├── docs
 │   ├── dataset_description.md
 │   ├── reproduction.md
+│   ├── module_registration.md
 │   └── model_structure.md
 │
 └── results
@@ -103,7 +112,7 @@ dataset
     └── test
 ```
 
-Each image should have a corresponding label file with the same file name.
+Each image should have a corresponding label file with the same base filename.
 
 Example:
 
@@ -116,7 +125,7 @@ dataset/labels/train/000001.txt
 
 ### 3.2 Annotation Format
 
-Each label file should follow the standard YOLO format:
+Each label file should follow the standard YOLO annotation format:
 
 ```text
 class_id x_center y_center width height
@@ -159,9 +168,18 @@ names:
   - nest
 ```
 
-If your dataset uses different categories, modify `nc` and `names` accordingly.
-
 The number of categories in `configs/data_example.yaml` must be consistent with the manuscript and with the trained model.
+
+The example categories used in this repository are:
+
+```text
+insulator
+broken
+flashover
+hammer
+corrode
+nest
+```
 
 ---
 
@@ -192,6 +210,10 @@ SE_SPDConv is the code-level class name.
 
 Do not write `SE-SPDConv` inside Python class names or YAML module names, because the hyphen is not a valid Python identifier.
 
+---
+
+## 5. Ultralytics Integration
+
 This repository provides HSDNet-specific patch files rather than a complete modified Ultralytics source tree.
 
 The custom modules are provided in:
@@ -200,26 +222,37 @@ The custom modules are provided in:
 models/block.py
 models/head.py
 models/tcf.py
+```
 
 Before training, users should register or merge the custom modules into a compatible Ultralytics YOLO environment.
 
 The required module names are:
 
+```text
 SE_SPDConv
 SplitOmniFusion
 Detect_SEPS
+```
 
 The TCF implementation is provided in:
 
+```text
 models/tcf.py
+```
 
 TCF can be applied to raw detection results during inference or post-processing.
+
+Detailed module registration instructions are provided in:
+
+```text
+docs/module_registration.md
 ```
+
 ---
 
-## 5. Training
+## 6. Training
 
-### 5.1 Basic Training Command
+### 6.1 Basic Training Command
 
 Run:
 
@@ -227,24 +260,25 @@ Run:
 python scripts/train.py
 ```
 
-The default training script should use:
+The default training script uses the following settings:
 
 ```text
 model: configs/hsdnet.yaml
 data: configs/data_example.yaml
-image size: 640
+image size: 640 × 640
 epochs: 300
 batch size: 24
 optimizer: AdamW
-initial learning rate: 0.01
+patience: 30
+workers: 8
 device: 0
 ```
 
 ---
 
-### 5.2 Training with Custom Arguments
+### 6.2 Training with Custom Arguments
 
-If the script supports command-line arguments, use:
+For Windows PowerShell:
 
 ```bash
 python scripts/train.py ^
@@ -254,7 +288,9 @@ python scripts/train.py ^
   --epochs 300 ^
   --batch 24 ^
   --device 0 ^
-  --optimizer AdamW
+  --optimizer AdamW ^
+  --patience 30 ^
+  --workers 8
 ```
 
 For Linux or macOS:
@@ -268,11 +304,13 @@ python scripts/train.py \
   --batch 24 \
   --device 0 \
   --optimizer AdamW \
+  --patience 30 \
+  --workers 8
 ```
 
 ---
 
-### 5.3 Training with Ultralytics CLI
+### 6.3 Training with Ultralytics CLI
 
 The model can also be trained using the Ultralytics command-line interface:
 
@@ -282,21 +320,13 @@ yolo detect train model=configs/hsdnet.yaml data=configs/data_example.yaml imgsz
 
 ---
 
-### 5.4 Expected Output
+### 6.4 Expected Output
 
 After training, the results are usually saved in:
 
 ```text
 runs/train/hsdnet
 ```
-
-or:
-
-```text
-runs/detect/train
-```
-
-depending on the script configuration.
 
 The trained weights are usually located at:
 
@@ -305,18 +335,11 @@ runs/train/hsdnet/weights/best.pt
 runs/train/hsdnet/weights/last.pt
 ```
 
-or:
-
-```text
-runs/detect/train/weights/best.pt
-runs/detect/train/weights/last.pt
-```
-
 ---
 
-## 6. Validation
+## 7. Validation
 
-### 6.1 Basic Validation Command
+### 7.1 Basic Validation Command
 
 Run:
 
@@ -326,16 +349,18 @@ python scripts/val.py
 
 ---
 
-### 6.2 Validation with Custom Arguments
+### 7.2 Validation with Custom Arguments
 
-If command-line arguments are supported, run:
+For Windows PowerShell:
 
 ```bash
 python scripts/val.py ^
   --weights runs/train/hsdnet/weights/best.pt ^
   --data configs/data_example.yaml ^
   --imgsz 640 ^
-  --device 0
+  --batch 24 ^
+  --device 0 ^
+  --split val
 ```
 
 For Linux or macOS:
@@ -345,20 +370,22 @@ python scripts/val.py \
   --weights runs/train/hsdnet/weights/best.pt \
   --data configs/data_example.yaml \
   --imgsz 640 \
-  --device 0
+  --batch 24 \
+  --device 0 \
+  --split val
 ```
 
 ---
 
-### 6.3 Validation with Ultralytics CLI
+### 7.3 Validation with Ultralytics CLI
 
 ```bash
-yolo detect val model=runs/train/hsdnet/weights/best.pt data=configs/data_example.yaml imgsz=640 device=0
+yolo detect val model=runs/train/hsdnet/weights/best.pt data=configs/data_example.yaml imgsz=640 batch=24 device=0
 ```
 
 ---
 
-### 6.4 Evaluation Metrics
+### 7.4 Evaluation Metrics
 
 The main evaluation metrics include:
 
@@ -372,13 +399,13 @@ FLOPs
 FPS
 ```
 
-For fair comparison, all models should use the same dataset split, input image size, and evaluation protocol.
+For fair comparison, all models should use the same dataset split, input image size, training configuration, and evaluation protocol.
 
 ---
 
-## 7. Inference
+## 8. Inference
 
-### 7.1 Basic Inference Command
+### 8.1 Basic Inference Command
 
 Run:
 
@@ -388,14 +415,18 @@ python scripts/predict.py
 
 ---
 
-### 7.2 Inference with Custom Arguments
+### 8.2 Inference with Custom Arguments
+
+For Windows PowerShell:
 
 ```bash
 python scripts/predict.py ^
   --weights runs/train/hsdnet/weights/best.pt ^
   --source examples/images ^
   --imgsz 640 ^
-  --device 0
+  --device 0 ^
+  --conf 0.25 ^
+  --iou 0.7
 ```
 
 For Linux or macOS:
@@ -405,12 +436,14 @@ python scripts/predict.py \
   --weights runs/train/hsdnet/weights/best.pt \
   --source examples/images \
   --imgsz 640 \
-  --device 0
+  --device 0 \
+  --conf 0.25 \
+  --iou 0.7
 ```
 
 ---
 
-### 7.3 Inference with Ultralytics CLI
+### 8.3 Inference with Ultralytics CLI
 
 ```bash
 yolo detect predict model=runs/train/hsdnet/weights/best.pt source=examples/images imgsz=640 device=0 save=True
@@ -419,12 +452,20 @@ yolo detect predict model=runs/train/hsdnet/weights/best.pt source=examples/imag
 The inference results are usually saved in:
 
 ```text
+runs/predict/hsdnet
+```
+
+or:
+
+```text
 runs/detect/predict
 ```
 
+depending on the Ultralytics version and script configuration.
+
 ---
 
-## 8. FPS Reporting
+## 9. FPS Reporting
 
 This repository does not provide a standalone FPS evaluation script. Inference speed can be evaluated using the Ultralytics prediction interface or a user-defined timing script.
 
@@ -440,30 +481,35 @@ inference framework
 precision mode
 number of warm-up iterations
 number of test iterations
+```
 
 The manuscript reports the following deployment performance:
 
+```text
 Windows platform single-model FPS: 198
 Linux edge-device stable FPS: approximately 28
 Average end-to-end latency: 33.7 ms
 P95 latency: 44.6 ms
+```
 
 The Windows FPS and Linux edge-device FPS correspond to different hardware platforms and testing protocols, so they should not be directly compared as absolute equivalents.
-```
 
 ---
 
-## 9. Reproducing Main Results
+## 10. Reproducing Main Results
 
 To reproduce the main results reported in the manuscript:
 
-1. Prepare the dataset in YOLO format.
-2. Modify `configs/data_example.yaml`.
-3. Confirm that `configs/hsdnet.yaml` uses the correct modules.
-4. Train the model using the same training settings.
-5. Validate the best checkpoint on the same validation or test set.
-6. Record the metrics.
-7. Compare the results with `results/main_results.md`.
+1. Install the required environment.
+2. Install the Ultralytics YOLO framework.
+3. Register or merge the custom HSDNet modules according to `docs/module_registration.md`.
+4. Prepare the dataset in YOLO format.
+5. Modify `configs/data_example.yaml`.
+6. Confirm that `configs/hsdnet.yaml` uses the correct custom module names.
+7. Train HSDNet using the same training settings.
+8. Validate the best checkpoint on the same validation or test set.
+9. Record the metrics.
+10. Compare the results with `results/main_results.md`.
 
 Recommended training settings:
 
@@ -472,13 +518,14 @@ imgsz = 640
 epochs = 300
 batch = 24
 optimizer = AdamW
-lr0 = 0.01
+patience = 30
+workers = 8
 device = 0
 ```
 
 ---
 
-## 10. Reproducing Ablation Studies
+## 11. Reproducing Ablation Studies
 
 To reproduce ablation studies, train different model variants under the same experimental settings.
 
@@ -489,7 +536,8 @@ Baseline
 Baseline + SE-SPDConv
 Baseline + SE-SPDConv + SplitOmniFusion
 Baseline + SE-SPDConv + SplitOmniFusion + Detect_SEPS
-Full HSDNet
+Baseline + SE-SPDConv + SplitOmniFusion + Detect_SEPS + TCF
+Full HSDNet with Online Augmentation
 ```
 
 All variants should use:
@@ -499,11 +547,12 @@ same dataset split
 same image size
 same number of epochs
 same optimizer
-same random seed
+same batch size
+same patience setting
 same evaluation protocol
 ```
 
-The ablation results should be summarized in:
+The ablation results are summarized in:
 
 ```text
 results/ablation_results.md
@@ -511,7 +560,7 @@ results/ablation_results.md
 
 ---
 
-## 11. Target-Constrained Filter Evaluation
+## 12. Target-Constrained Filter Evaluation
 
 The TCF implementation is provided in:
 
@@ -546,7 +595,7 @@ When reporting TCF results, also discuss possible recall changes caused by misse
 
 ---
 
-## 12. Notes on Reproducibility
+## 13. Notes on Reproducibility
 
 The exact numerical results may vary slightly due to:
 
@@ -554,19 +603,20 @@ The exact numerical results may vary slightly due to:
 GPU type
 CUDA version
 PyTorch version
+Ultralytics version
 random seed
 data loading order
 training precision
 hardware-specific acceleration
 ```
 
-For fair comparison, use the same environment and dataset split for all methods.
+For fair comparison, use the same environment, dataset split, and training settings for all compared methods.
 
 ---
 
-## 13. Common Errors
+## 14. Common Errors
 
-### 13.1 Module Not Found
+### 14.1 Module Not Found
 
 If an error similar to the following appears:
 
@@ -574,15 +624,16 @@ If an error similar to the following appears:
 KeyError: 'SE_SPDConv'
 KeyError: 'SplitOmniFusion'
 KeyError: 'Detect_SEPS'
+ModuleNotFoundError
 ```
 
-check whether the modules are correctly defined and registered in the Ultralytics parsing system.
+check whether the custom modules are correctly defined, imported, and registered in the Ultralytics parsing system.
 
 The module names in `configs/hsdnet.yaml` must match the class names in the source code.
 
 ---
 
-### 13.2 Dataset Path Error
+### 14.2 Dataset Path Error
 
 If an error indicates that images or labels cannot be found, check:
 
@@ -603,23 +654,23 @@ test: images/test
 
 ---
 
-### 13.3 CUDA Out of Memory
+### 14.3 CUDA Out of Memory
 
 If CUDA memory is insufficient, reduce the batch size:
 
 ```bash
-yolo detect train model=configs/hsdnet.yaml data=configs/data_example.yaml imgsz=640 epochs=300 batch=24 device=0
+yolo detect train model=configs/hsdnet.yaml data=configs/data_example.yaml imgsz=640 epochs=300 batch=12 device=0 optimizer=AdamW patience=30 workers=8
 ```
 
 If the problem remains, reduce the input size:
 
 ```bash
-yolo detect train model=configs/hsdnet.yaml data=configs/data_example.yaml imgsz=640 epochs=300 batch=8 device=0
+yolo detect train model=configs/hsdnet.yaml data=configs/data_example.yaml imgsz=512 epochs=300 batch=12 device=0 optimizer=AdamW patience=30 workers=8
 ```
 
 ---
 
-### 13.4 Weight File Not Found
+### 14.4 Weight File Not Found
 
 If the validation or inference script cannot find the model weights, check whether the path exists:
 
@@ -635,7 +686,7 @@ python scripts/val.py --weights path/to/best.pt
 
 ---
 
-## 14. Data Availability Statement
+## 15. Data Availability Statement
 
 The full UAV transmission line inspection dataset cannot be publicly released due to data ownership, privacy, and operational safety restrictions.
 
@@ -654,31 +705,39 @@ Access to the full dataset may be requested from the corresponding author for ac
 
 ---
 
-## 15. Code Availability Statement
-
-The source code, model configuration files, training scripts, validation scripts, inference scripts, and reproduction instructions are provided in this repository.
-
-After the official GitHub release, an archived version with a permanent DOI will be deposited on Zenodo.
-
-```text
-GitHub repository: https://github.com/your_username/HSDNet
-Zenodo DOI: https://doi.org/10.5281/zenodo.xxxxxxxx
-```
-
-Please replace the above links after creating the GitHub repository and Zenodo archive.
-
----
-
 ## 16. Code Availability Statement
 
-The source code, model configuration files, training scripts, validation scripts, inference scripts, TCF implementation, and reproduction instructions are provided in this repository.
+The source code, model configuration files, training scripts, validation scripts, inference scripts, Target-Constrained Filter implementation, experimental result summaries, and reproduction instructions are publicly available in this repository.
 
 GitHub repository:
 
 ```text
 https://github.com/lshuang00001-ui/HSDNet
 ```
-Archived version with DOI:
+
+Archived version with permanent DOI:
 
 ```text
 https://doi.org/10.5281/zenodo.20065076
+```
+
+Please note that this repository provides the HSDNet-specific modified modules, configuration files, scripts, and documentation. Since HSDNet is implemented based on the Ultralytics YOLO framework, users should first install the Ultralytics YOLO framework and then register or merge the provided custom modules according to the instructions in:
+
+```text
+docs/module_registration.md
+```
+
+The full UAV transmission line inspection dataset used in the manuscript is not included in this repository due to data ownership, privacy, and operational safety restrictions. The dataset format, annotation protocol, category definitions, and example configuration file are provided for reproducibility.
+
+---
+
+## 17. Contact
+
+For questions about reproduction, dataset format, or model implementation, please contact:
+
+```text
+Corresponding author: Author Name
+Email: your_email@example.com
+```
+
+Please replace the contact information before public release.
