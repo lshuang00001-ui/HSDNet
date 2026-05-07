@@ -214,6 +214,7 @@ The TCF implementation is provided in:
 models/tcf.py
 
 TCF can be applied to raw detection results during inference or post-processing.
+```
 ---
 
 ## 5. Training
@@ -448,6 +449,7 @@ Average end-to-end latency: 33.7 ms
 P95 latency: 44.6 ms
 
 The Windows FPS and Linux edge-device FPS correspond to different hardware platforms and testing protocols, so they should not be directly compared as absolute equivalents.
+```
 
 ---
 
