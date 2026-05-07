@@ -161,6 +161,7 @@ Detailed module registration instructions are provided in:
 docs/module_registration.md
 
 Note that SE-SPDConv is the paper-level name, while SE_SPDConv is used as the code-level class name because hyphens are not valid in Python class names.
+```
 
 ---
 
