@@ -94,7 +94,6 @@ HSDNet_release
 | `scripts/train.py` | Training script. |
 | `scripts/val.py` | Validation script. |
 | `scripts/predict.py` | Inference script. |
-| `scripts/get_fps.py` | Inference speed evaluation script. |
 | `docs/dataset_description.md` | Dataset description, category definitions, and annotation format. |
 | `docs/reproduction.md` | Step-by-step reproduction instructions. |
 | `docs/module_registration.md` | Instructions for registering custom HSDNet modules in the Ultralytics YOLO framework. |
