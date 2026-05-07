@@ -718,7 +718,7 @@ https://github.com/lshuang00001-ui/HSDNet
 Archived version with permanent DOI:
 
 ```text
-https://doi.org/10.5281/zenodo.20065076
+https://doi.org/10.5281/zenodo.20066405
 ```
 
 Please note that this repository provides the HSDNet-specific modified modules, configuration files, scripts, and documentation. Since HSDNet is implemented based on the Ultralytics YOLO framework, users should first install the Ultralytics YOLO framework and then register or merge the provided custom modules according to the instructions in:
