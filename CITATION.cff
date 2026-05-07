@@ -32,8 +32,9 @@ authors:
     given-names: "Jining"
     email: "jxu0422@ncut.edu.cn"
 
-repository-code: "https://github.com/your_username/HSDNet"
-url: "https://github.com/your_username/HSDNet"
+repository-code: "https://github.com/lshuang00001-ui/HSDNet"
+url: "https://github.com/lshuang00001-ui/HSDNet"
+doi: "10.5281/zenodo.20065076"
 
 abstract: "HSDNet is a hierarchically constrained lightweight detection network for UAV-based transmission line defect detection and edge deployment."
 
