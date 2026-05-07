@@ -42,7 +42,8 @@ keywords:
   - target-constrained filter
 
 license: "AGPL-3.0-or-later"
-version: "1.0.1"
+doi: "10.5281/zenodo.20066405"
+version: "1.0.2"
 date-released: "2026-05-07"
 
 preferred-citation:
