@@ -669,13 +669,13 @@ Please replace the above links after creating the GitHub repository and Zenodo a
 
 ---
 
-## 16. Contact
+## 16. Code Availability Statement
 
-For questions about reproduction, dataset format, or model implementation, please contact:
+The source code, model configuration files, training scripts, validation scripts, inference scripts, TCF implementation, and reproduction instructions are provided in this repository.
+
+GitHub repository:
 
 ```text
-Corresponding author: Jining Xu
-Email: jxu0422@ncut.edu.cn
-```
-
-Please replace the contact information before public release.
+https://github.com/lshuang00001-ui/HSDNet
+Archived version with DOI:
+https://doi.org/10.5281/zenodo.20065076
