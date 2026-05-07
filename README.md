@@ -144,6 +144,7 @@ models/head.py
 models/tcf.py
 
 The model configuration file is provided in:
+
 configs/hsdnet.yaml
 
 Before training, users should first install the Ultralytics YOLO framework and then register or merge the provided custom modules into their local Ultralytics environment.
@@ -155,9 +156,11 @@ SplitOmniFusion
 Detect_SEPS
 
 The Target-Constrained Filter is implemented separately as a post-processing module:
+
 models/tcf.py
 
 Detailed module registration instructions are provided in:
+
 docs/module_registration.md
 
 Note that SE-SPDConv is the paper-level name, while SE_SPDConv is used as the code-level class name because hyphens are not valid in Python class names.
