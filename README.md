@@ -1,5 +1,7 @@
 ﻿# HSDNet: Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment
 
+ [![DOI](https://zenodo.org/badge/1231611053.svg)](https://doi.org/10.5281/zenodo.20065075)
+
 This repository provides the modified HSDNet modules, model configuration files, and reproducibility instructions for the manuscript:
 
 **Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment**
@@ -389,20 +391,35 @@ Please replace the above links after creating the GitHub repository and Zenodo a
 
 ---
 
-## 16. Citation
+## 16. Code Availability
 
-If this repository is useful for your research, please cite the related manuscript:
+The source code, model configuration files, training scripts, validation scripts, inference scripts, Target-Constrained Filter implementation, experimental result summaries, and reproducibility instructions are publicly available in this repository.
 
-```bibtex
-@article{HSDNet2026,
-  title   = {Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment},
-  author  = {Author Name and Author Name and Author Name},
-  journal = {The Visual Computer},
-  year    = {2026}
-}
+GitHub repository:
+
+```text
+https://github.com/lshuang00001-ui/HSDNet
 ```
 
-After publication, the citation information will be updated.
+The archived version of this repository is available on Zenodo with a permanent DOI:
+
+```text
+https://doi.org/10.5281/zenodo.20065076
+```
+
+The DOI badge for the latest archived version is:
+
+```markdown
+[![DOI](https://zenodo.org/badge/1231611053.svg)](https://doi.org/10.5281/zenodo.20065075)
+```
+
+Please note that this repository provides the HSDNet-specific modified modules, configuration files, scripts, and documentation. Since HSDNet is implemented based on the Ultralytics YOLO framework, users should first install the Ultralytics YOLO framework and then register or merge the provided custom modules according to the instructions in:
+
+```text
+docs/module_registration.md
+```
+
+The full UAV transmission line inspection dataset used in the manuscript is not included in this repository due to data ownership, privacy, and operational safety restrictions. The dataset format, annotation protocol, category definitions, and example configuration file are provided for reproducibility.
 
 ---
 
