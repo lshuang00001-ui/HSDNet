@@ -1,6 +1,6 @@
 # HSDNet: Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment
 
-[![DOI](https://zenodo.org/badge/1231611053.svg)](https://doi.org/10.5281/zenodo.20065075)
+[![DOI](https://zenodo.org/badge/1231611053.svg)](https://doi.org/10.5281/zenodo.20066405)
 
 This repository provides the modified HSDNet modules, model configuration files, scripts, experimental result summaries, and reproducibility instructions for the manuscript:
 
