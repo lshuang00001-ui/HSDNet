@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this code, please cite the related manuscript."
+message: "If you use this repository, please cite the related manuscript and archived software release. Min Li and Shuang Li contributed equally to this work. Jining Xu is the corresponding author."
 title: "HSDNet: Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment"
 type: software
 
@@ -7,27 +7,21 @@ authors:
   - family-names: "Li"
     given-names: "Min"
     email: "liminncut@ncut.edu.cn"
-
   - family-names: "Li"
     given-names: "Shuang"
     email: "lishuang@mail.ncut.edu.cn"
-
   - family-names: "Li"
     given-names: "Kailong"
     email: "leeph.d2023@mail.ncut.edu.cn"
-
   - family-names: "Tong"
     given-names: "Fengyu"
     email: "18238946747@163.com"
-
   - family-names: "Jiang"
     given-names: "Zhenzhong"
     email: "545582991@qq.com"
-
   - family-names: "Zhao"
     given-names: "Jinlu"
     email: "zjlssss@163.com"
-
   - family-names: "Xu"
     given-names: "Jining"
     email: "jxu0422@ncut.edu.cn"
@@ -36,15 +30,38 @@ repository-code: "https://github.com/lshuang00001-ui/HSDNet"
 url: "https://github.com/lshuang00001-ui/HSDNet"
 doi: "10.5281/zenodo.20065076"
 
-abstract: "HSDNet is a hierarchically constrained lightweight detection network for UAV-based transmission line defect detection and edge deployment."
+abstract: "HSDNet is a hierarchically constrained lightweight detection network for UAV-based transmission line defect detection and edge deployment. This repository provides HSDNet-specific model configuration files, custom module patch files, training, validation, and inference scripts, Target-Constrained Filter implementation, experimental result summaries, and reproducibility documentation."
 
 keywords:
   - UAV inspection
   - transmission line defect detection
   - lightweight object detection
   - edge deployment
+  - hierarchical constraints
   - visual computing
+  - target-constrained filter
 
 license: "AGPL-3.0-or-later"
-version: "1.0.0"
+version: "1.0.1"
 date-released: "2026-05-07"
+
+preferred-citation:
+  type: article
+  title: "Hierarchically Constrained Lightweight Network for UAV Transmission Line Defect Detection and Edge Deployment"
+  authors:
+    - family-names: "Li"
+      given-names: "Min"
+    - family-names: "Li"
+      given-names: "Shuang"
+    - family-names: "Li"
+      given-names: "Kailong"
+    - family-names: "Tong"
+      given-names: "Fengyu"
+    - family-names: "Jiang"
+      given-names: "Zhenzhong"
+    - family-names: "Zhao"
+      given-names: "Jinlu"
+    - family-names: "Xu"
+      given-names: "Jining"
+  journal: "The Visual Computer"
+  year: 2026
